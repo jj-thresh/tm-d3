@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+
+# Raw Figma export — unused at runtime (only /public/img is referenced).
+public/assets
+
+# Kept local; needs `workflow` OAuth scope to push
+.github/

@@ -1,0 +1,608 @@
+/* =========================================================
+   Threshold Media — landing page
+   Desktop website. Each section is a full-bleed band with its
+   own background; content sits in a centered 1512px column.
+   Matched to Figma tm3 (node 12346-1640).
+   ========================================================= */
+
+/* ---------- Font hooks -------------------------------------------------
+   The design uses Widescreen (display) + Effra (body) — both commercial.
+   When you have the licensed webfonts, drop them into /public/fonts and
+   uncomment the @font-face blocks below; the variables already point at
+   the family names, so no other change is needed.
+----------------------------------------------------------------------- */
+/*
+@font-face { font-family: 'Widescreen'; src: url('/fonts/Widescreen-Light.woff2') format('woff2');  font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Widescreen'; src: url('/fonts/Widescreen-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Widescreen'; src: url('/fonts/Widescreen-Bold.woff2') format('woff2');   font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Widescreen'; src: url('/fonts/Widescreen-XBold.woff2') format('woff2');  font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Effra'; src: url('/fonts/Effra-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Effra'; src: url('/fonts/Effra-Medium.woff2') format('woff2');  font-weight: 500; font-style: normal; font-display: swap; }
+*/
+
+:root {
+  --design-w: 1512px;
+
+  --font-display: 'Widescreen', 'Archivo', system-ui, sans-serif;
+  --font-body: 'Effra', 'Inter', system-ui, sans-serif;
+  --font-alt: '42dot Sans', 'Inter', system-ui, sans-serif;
+
+  --blue: #0b519d;
+  --blue-cyan: #379dcc;
+  --blue-btn-a: #075486;
+  --blue-btn-b: #0c5983;
+  --orange: #ff6201;
+  --orange-b: #ffba53;
+  --orange-title: #b54600;
+  --ink: #000;
+  --grey-desc: #666;
+  --grey-icon: #7d7c79;
+  --divider: #dbdada;
+}
+
+/* ---------- reset ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html,
+body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: #fff;
+  /* Desktop-only design: keep the layout at its native width and let the
+     browser scroll horizontally on smaller screens rather than reflowing.
+     (No overflow-x:hidden here — it silently turns <body> into a second
+     scroll container, which breaks scroll positioning.) */
+  min-width: var(--design-w);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { display: block; max-width: none; }
+a { text-decoration: none; color: inherit; }
+h1, h2, h3, p { margin: 0; }
+
+/* ---------- Section band + centered inner column ----------
+   .sec  -> full-viewport-width band, carries the background.
+   .in   -> the 1512px design column, centered; all content and any
+            absolutely-positioned decorations are relative to this. */
+.sec {
+  width: 100%;
+  min-width: var(--design-w);
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.in {
+  width: var(--design-w);
+  position: relative;
+}
+
+/* Shared display heading treatment */
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: 500;
+  /* All buttons share the padding + corner radius of "Let Us Be Your Partner". */
+  padding: 17px 24px;
+  font-size: 20px;
+  border-radius: 1000px;
+  color: #fff;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.btn:hover { filter: brightness(1.06); transform: scale(1.1); }
+.btn--blue {
+  background: linear-gradient(180deg, var(--blue-btn-a), var(--blue-btn-b));
+}
+.btn--orange {
+  background: var(--orange);
+}
+
+/* =========================================================
+   NAV (fixed, full-bleed, centered inner)
+   ========================================================= */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 45px 10px 35px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+.nav__inner {
+  width: 1280px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav__logo img { height: 77px; width: 228.435px; }
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  /* Match the primary heading font used across the section titles
+     (.h-display): same family (--font-display) and weight (700). */
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.8px;
+  color: #000;
+}
+.nav__links a { transition: opacity 0.2s ease; }
+.nav__links a:hover { opacity: 0.6; }
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.sec--hero { background: #fff; overflow: hidden; }
+.in--hero {
+  min-height: 1049px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 180px;
+}
+.hero__wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 15% 55%, rgba(11, 81, 157, 0.06), rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+}
+.hero__copy {
+  position: relative;
+  width: 881px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+.hero__eyebrow {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 25px;
+  letter-spacing: -1px;
+  color: #000;
+}
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 81px;
+  line-height: 1.05;
+  letter-spacing: -5.67px;
+  color: #000;
+}
+
+/* =========================================================
+   ONE CALL
+   ========================================================= */
+.sec--onecall {
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--blue) 36.6%, var(--blue-cyan) 138%);
+}
+.in--onecall {
+  min-height: 799px;
+  padding: 100px 180px 100px 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+.onecall__media {
+  position: absolute;
+  left: -233px;
+  bottom: 0; /* anchored to the bottom of the section */
+  width: 1115px;
+  height: 836px;
+  pointer-events: none;
+}
+.onecall__media img { width: 1115px; height: 836px; object-fit: cover; }
+.onecall__copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+}
+.onecall__title { font-size: 76px; color: #fff; letter-spacing: -3.8px; }
+.onecall__body {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #fff;
+  width: 552px;
+}
+.onecall__copy .btn { align-self: flex-start; }
+
+/* =========================================================
+   SEAT AT TABLE
+   ========================================================= */
+.sec--seat { background: linear-gradient(180deg, var(--orange), var(--orange-b)); }
+.in--seat {
+  padding: 100px 180px 130px;
+  display: flex;
+  align-items: center;
+  gap: 62px;
+}
+.seat__title {
+  font-size: 76px;
+  color: #fff;
+  letter-spacing: -3.8px;
+  width: 445px;
+  flex-shrink: 0;
+}
+.seat__cards {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  width: 303.25px;
+  background: #fff;
+  border-radius: 32px;
+  padding: 51px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+/* Bloom anchors: each card's transform-origin is the corner nearest the grid
+   center, so the entrance scales outward from the middle.
+   1 Accountability (top-left)    -> bottom-right
+   2 Clarity        (top-right)   -> bottom-left
+   3 Responsiveness (bottom-left) -> top-right
+   4 Experience     (bottom-right)-> top-left */
+.seat__cards .card:nth-child(1) { transform-origin: 100% 100%; }
+.seat__cards .card:nth-child(2) { transform-origin: 0% 100%; }
+.seat__cards .card:nth-child(3) { transform-origin: 100% 0%; }
+.seat__cards .card:nth-child(4) { transform-origin: 0% 0%; }
+.card__icon { font-size: 36px; color: var(--grey-icon); }
+.card__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1.05;
+  letter-spacing: -1.08px;
+  color: var(--orange-title);
+}
+.card__body {
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+  color: #000;
+}
+
+/* =========================================================
+   VIDEO / 30 YEARS
+   ========================================================= */
+.sec--video { background: #000; }
+.in--video {
+  min-height: 851px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+.video__title {
+  font-size: 76px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: -3.8px;
+}
+.video__play {
+  width: 129.88px;
+  height: 129.88px;
+  border-radius: 108px;
+  background: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+.video__play i { font-size: 60px; color: #000; margin-left: 6px; }
+.video__play:hover { transform: scale(1.1); }
+
+/* =========================================================
+   SECTION HEAD (chevron + title + sub) — shared
+   ========================================================= */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.section-head__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+.chevron { width: 43px; height: 77px; }
+.section-head__title { font-size: 76px; letter-spacing: -3.8px; color: var(--blue); white-space: nowrap; }
+.section-head__sub {
+  font-family: var(--font-alt);
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+  color: #000;
+}
+.section-head--light .section-head__title,
+.section-head--light .section-head__sub { color: #fff; }
+
+/* =========================================================
+   CAPABILITIES (list)
+   ========================================================= */
+.sec--cap { background: #fff; }
+.in--cap {
+  padding: 100px 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px; /* space between the title/subtitle block and the list of links */
+}
+.cap__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 100%;
+}
+.cap__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 24px;
+}
+/* Subtle hover highlight — a rounded pill sitting behind the row content. */
+.cap__row::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  right: -20px;
+  bottom: 10px;
+  left: -20px;
+  background: #e5e5e5;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+}
+.cap__row:hover::before { opacity: 1; }
+.cap__thumb {
+  width: 120px;
+  height: 120px;
+  border-radius: 24px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.cap__text { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.cap__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.96px;
+  color: #000;
+}
+.cap__desc {
+  font-size: 22px;
+  line-height: 1.5;
+  letter-spacing: -0.44px;
+  color: var(--grey-desc);
+}
+
+/* =========================================================
+   OUR WORK
+   ========================================================= */
+.sec--work { background: linear-gradient(180deg, var(--blue) 36.6%, var(--blue-cyan) 138%); }
+.in--work {
+  min-height: 1162px;
+  padding: 100px 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.work__grid {
+  width: 1123px;
+  height: 752px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+.work__tile {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+.work__tile img,
+.work__tile video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Explicit 4x4 placement — matches the Figma "Our Work" arrangement exactly. */
+.work__tile--salon     { grid-column: 1 / 3; grid-row: 1 / 3; }
+.work__tile--lci       { grid-column: 3;     grid-row: 1; }
+.work__tile--kim       { grid-column: 4;     grid-row: 1; }
+.work__tile--method    { grid-column: 3;     grid-row: 2; }
+.work__tile--golden    { grid-column: 4;     grid-row: 2; }
+.work__tile--root      { grid-column: 1;     grid-row: 3 / 5; }
+.work__tile--creeks    { grid-column: 2;     grid-row: 3; }
+.work__tile--lansdowne { grid-column: 2;     grid-row: 4; background: #fff; }
+.work__tile--vhc       { grid-column: 3 / 5; grid-row: 3 / 5; }
+.work__tile--kim { background: rgba(255, 255, 255, 0.1); }
+
+/* =========================================================
+   CAPABILITIES (columns) + team photo
+   ========================================================= */
+.sec--caps2 {
+  /* Hidden: the capabilities list above covers this. Kept in code intentionally. */
+  display: none;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--orange), var(--orange-b));
+}
+.in--caps2 {
+  min-height: 683px;
+  padding: 100px 180px 130px;
+}
+.caps2__content {
+  width: 842px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.caps2__cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  width: 731px;
+  margin-top: 10px;
+  color: #fff;
+}
+.caps2__col {
+  width: 209px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.caps2__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.84px;
+  width: 100%;
+}
+.caps2__list {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  width: 100%;
+}
+.caps2__photo {
+  position: absolute;
+  left: 883px;
+  top: 99px;
+  width: 822px;
+  height: 584px;
+  border-radius: 32px;
+  overflow: hidden;
+}
+.caps2__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* =========================================================
+   WANT GROWTH / CTA
+   ========================================================= */
+.sec--grow { background: #fff; overflow: hidden; }
+.in--grow {
+  min-height: 660px;
+  padding: 100px 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.grow__copy { display: flex; flex-direction: column; gap: 10px; }
+.grow__title { font-size: 76px; letter-spacing: -3.8px; color: #000; width: 789px; }
+.grow__body {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #000;
+  width: 657px;
+}
+.grow__copy .btn { align-self: flex-start; margin-top: 6px; }
+.grow__arrow {
+  position: absolute;
+  right: -11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 338px;
+  height: 605.256px;
+}
+.grow__arrow img { width: 338px; height: 605.256px; }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.sec--footer { background: var(--blue); }
+.in--footer {
+  padding: 80px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+}
+.footer__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* Footer logo mirrors the header lockup, but uses the white "Our Work"
+   chevron so it reads on the blue footer. */
+.footer__logo { display: flex; align-items: center; gap: 14px; }
+.footer__mark { height: 52px; width: auto; }
+.footer__word { height: 30px; width: auto; }
+.footer__connect { display: flex; align-items: center; gap: 40px; color: #fff; }
+.footer__cta {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.2;
+  letter-spacing: -1.14px;
+  width: 372px;
+}
+.footer__social {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 143px;
+  font-size: 32px;
+}
+.footer__social a { transition: opacity 0.2s ease; }
+.footer__social a:hover { opacity: 0.7; }
+.footer__legal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+}
+.footer__legal a { text-decoration: none; }
+
+/* ---------- scroll-reveal defaults (GSAP toggles these) ---------- */
+[data-reveal] { will-change: transform, opacity; }
+/* Per-word reveal spans need to be transformable inline blocks. */
+.word { display: inline-block; will-change: transform, opacity; }
