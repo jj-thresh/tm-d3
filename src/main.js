@@ -217,6 +217,24 @@ function initNavContrast() {
   window.addEventListener('resize', update);
 }
 
+// Mobile hamburger: toggles the nav links dropdown.
+function initMobileNav() {
+  const nav = document.querySelector('.nav');
+  const toggle = document.querySelector('.nav__toggle');
+  const links = document.querySelector('.nav__links');
+  if (!nav || !toggle || !links) return;
+  toggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('nav--open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      nav.classList.remove('nav--open');
+      toggle.setAttribute('aria-expanded', 'false');
+    })
+  );
+}
+
 function init() {
   window.ScrollTrigger = ScrollTrigger;
 
@@ -231,6 +249,7 @@ function init() {
   }
 
   initNavContrast(); // functional, runs regardless of reduced-motion
+  initMobileNav();
 
   // Recompute scroll positions once fonts/images settle the layout height.
   window.addEventListener('load', () => ScrollTrigger.refresh());

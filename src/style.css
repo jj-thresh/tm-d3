@@ -22,6 +22,7 @@
 
 :root {
   --design-w: 1512px;
+  --pad-x: 180px; /* section horizontal padding; shrinks at each breakpoint */
 
   --font-display: 'widescreen', 'Archivo', system-ui, sans-serif;
   --font-body: 'Effra', 'Inter', system-ui, sans-serif;
@@ -50,11 +51,7 @@ body {
   font-family: var(--font-body);
   color: var(--ink);
   background: #fff;
-  /* Desktop-only design: keep the layout at its native width and let the
-     browser scroll horizontally on smaller screens rather than reflowing.
-     (No overflow-x:hidden here — it silently turns <body> into a second
-     scroll container, which breaks scroll positioning.) */
-  min-width: var(--design-w);
+  overflow-x: clip; /* guard against any incidental horizontal overflow */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -68,13 +65,13 @@ h1, h2, h3, p { margin: 0; }
             absolutely-positioned decorations are relative to this. */
 .sec {
   width: 100%;
-  min-width: var(--design-w);
   display: flex;
   justify-content: center;
   position: relative;
 }
 .in {
-  width: var(--design-w);
+  width: 100%;
+  max-width: var(--design-w);
   position: relative;
 }
 
@@ -125,7 +122,8 @@ h1, h2, h3, p { margin: 0; }
   -webkit-backdrop-filter: blur(15px);
 }
 .nav__inner {
-  width: 1280px;
+  width: 100%;
+  max-width: 1280px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -157,13 +155,7 @@ h1, h2, h3, p { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 180px;
-}
-.hero__wash {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at 15% 55%, rgba(11, 81, 157, 0.06), rgba(255, 255, 255, 0) 60%);
-  pointer-events: none;
+  padding: 100px var(--pad-x);
 }
 .hero__copy {
   position: relative;
@@ -208,7 +200,7 @@ h1, h2, h3, p { margin: 0; }
 }
 .in--onecall {
   min-height: 799px;
-  padding: 100px 180px 100px 700px;
+  padding: 100px var(--pad-x) 100px 700px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -244,7 +236,7 @@ h1, h2, h3, p { margin: 0; }
    ========================================================= */
 .sec--seat { background: linear-gradient(180deg, var(--orange), var(--orange-b)); }
 .in--seat {
-  padding: 100px 180px 130px;
+  padding: 100px var(--pad-x) 130px;
   display: flex;
   align-items: center;
   gap: 62px;
@@ -366,7 +358,7 @@ h1, h2, h3, p { margin: 0; }
 /* Hidden to match v2 (which shows the orange columns below instead). Kept in code. */
 .sec--cap { display: none; background: #fff; }
 .in--cap {
-  padding: 100px 180px;
+  padding: 100px var(--pad-x);
   display: flex;
   flex-direction: column;
   gap: 48px; /* space between the title/subtitle block and the list of links */
@@ -431,14 +423,15 @@ h1, h2, h3, p { margin: 0; }
 .sec--work { background: linear-gradient(180deg, var(--blue) 36.6%, var(--blue-cyan) 138%); }
 .in--work {
   min-height: 1162px;
-  padding: 100px 180px;
+  padding: 100px var(--pad-x);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 .work__grid {
-  width: 1123px;
-  height: 752px;
+  width: 100%;
+  max-width: 1123px;
+  aspect-ratio: 1123 / 752;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
@@ -479,7 +472,7 @@ h1, h2, h3, p { margin: 0; }
   background: linear-gradient(180deg, var(--orange), var(--orange-b));
 }
 .in--caps2 {
-  padding: 100px 180px 130px;
+  padding: 100px var(--pad-x) 130px;
 }
 .caps2__content {
   width: 100%;
@@ -489,8 +482,9 @@ h1, h2, h3, p { margin: 0; }
 }
 .caps2__cols {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 25px;
+  gap: 40px 25px;
   width: 100%;
   margin-top: 24px;
   color: #fff;
@@ -528,7 +522,7 @@ h1, h2, h3, p { margin: 0; }
 .sec--grow { background: #fff; overflow: hidden; }
 .in--grow {
   min-height: 660px;
-  padding: 100px 180px;
+  padding: 100px var(--pad-x);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -636,3 +630,189 @@ h1, h2, h3, p { margin: 0; }
 [data-reveal] { will-change: transform, opacity; }
 /* Per-word reveal spans need to be transformable inline blocks. */
 .word { display: inline-block; will-change: transform, opacity; }
+
+/* =========================================================
+   MOBILE NAV TOGGLE (hamburger) — hidden on desktop
+   ========================================================= */
+.nav__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000;
+}
+.nav--on-dark .nav__toggle { color: #fff; }
+.nav__toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.nav--open .nav__toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav--open .nav__toggle span:nth-child(2) { opacity: 0; }
+.nav--open .nav__toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS (desktop-first)
+   large ≥1512 · medium ≤1511 · small ≤1279 · tablet ≤1023 · mobile ≤767
+   ========================================================= */
+
+/* ---------- Desktop medium ---------- */
+@media (max-width: 1511px) {
+  :root { --pad-x: 100px; }
+  .hero__title { font-size: 72px; letter-spacing: -4px; }
+  .section-head__title,
+  .onecall__title,
+  .seat__title,
+  .grow__title,
+  .video__title { font-size: 66px; letter-spacing: -3.2px; }
+}
+
+/* ---------- Desktop small ---------- */
+@media (max-width: 1279px) {
+  :root { --pad-x: 72px; }
+  .hero__title { font-size: 60px; letter-spacing: -3px; }
+  .section-head__title,
+  .onecall__title,
+  .seat__title,
+  .grow__title,
+  .video__title { font-size: 54px; letter-spacing: -2.4px; }
+  .grow__title { width: auto; max-width: 620px; }
+  .grow__body { width: auto; max-width: 90%; }
+  .grow__arrow { width: 240px; height: auto; aspect-ratio: 322 / 764; }
+
+  /* One call becomes a stacked column (hand on top, copy below). */
+  .in--onecall {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 90px var(--pad-x);
+    min-height: 0;
+  }
+  .onecall__media {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: min(420px, 80%);
+    height: auto;
+    aspect-ratio: 1115 / 836;
+    margin-bottom: 8px;
+  }
+  .onecall__media img { width: 100%; height: 100%; }
+  .onecall__copy { width: 100%; }
+  .onecall__body { width: 100%; max-width: 620px; }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1023px) {
+  :root { --pad-x: 48px; }
+
+  /* Nav → hamburger */
+  .nav { padding-left: var(--pad-x); padding-right: var(--pad-x); }
+  .nav__toggle { display: flex; }
+  .nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 12px var(--pad-x) 20px;
+    background: #fff;
+    color: #000 !important;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  }
+  .nav__links a { padding: 10px 0; font-size: 22px; }
+  .nav--open .nav__links { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  .hero__title { font-size: 46px; letter-spacing: -1.8px; }
+  .hero__eyebrow { font-size: 20px; }
+  .in--hero { min-height: 0; padding: 160px var(--pad-x) 90px; }
+  .section-head__title,
+  .onecall__title,
+  .seat__title,
+  .grow__title,
+  .video__title { font-size: 42px; letter-spacing: -1.8px; }
+
+  /* Seat: title stacks above the cards */
+  .in--seat { flex-direction: column; align-items: flex-start; gap: 40px; padding: 80px var(--pad-x); }
+  .seat__title { width: auto; }
+  .seat__cards { justify-content: flex-start; }
+
+  /* Capabilities columns: wrap to a comfortable grid */
+  .caps2__col { width: calc(50% - 20px); height: auto; }
+
+  /* Our Work grid stays 4-up but fluid; nudge the section padding */
+  .in--work { padding: 80px var(--pad-x); }
+
+  /* CTA arrow off on small screens (it bled behind the copy) */
+  .grow__arrow { display: none; }
+  .in--grow { min-height: 0; padding: 90px var(--pad-x); }
+  .grow__title { max-width: 100%; }
+
+  /* Footer stacks: logo, then connect, then columns */
+  .in--footer { flex-direction: column; gap: 48px; padding: 80px var(--pad-x); }
+  .footer__right { width: 100%; margin-left: 0; gap: 56px; }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 767px) {
+  :root { --pad-x: 20px; }
+
+  .hero__title { font-size: 34px; letter-spacing: -1px; }
+  .hero__eyebrow { font-size: 17px; }
+  .hero__sub { font-size: 17px; width: 100%; }
+  .in--hero { padding: 130px var(--pad-x) 70px; }
+
+  .section-head__title,
+  .onecall__title,
+  .seat__title,
+  .grow__title,
+  .video__title { font-size: 30px; letter-spacing: -1px; }
+  .section-head__sub { font-size: 16px; }
+  .chevron { height: 44px; }
+
+  /* trim vertical padding everywhere */
+  .in--onecall, .in--seat, .in--work, .in--grow { padding-top: 64px; padding-bottom: 64px; }
+  .in--caps2 { padding: 64px var(--pad-x); }
+
+  .onecall__media { width: min(300px, 80%); }
+  .onecall__body { font-size: 18px; }
+
+  /* Seat cards: single column, full width */
+  .card { width: 100%; }
+  .seat__cards { gap: 16px; }
+
+  /* Capabilities: one column */
+  .caps2__col { width: 100%; }
+  .caps2__name { font-size: 24px; }
+
+  /* Our Work: reset the fancy spans → simple 2-column of squares */
+  .work__grid {
+    aspect-ratio: auto;
+    max-width: none;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 12px;
+  }
+  .work__tile { grid-column: auto !important; grid-row: auto !important; aspect-ratio: 1; }
+
+  /* Footer: everything stacks, columns wrap to one */
+  .footer__connect { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .footer__cta { font-size: 30px; }
+  .footer__bottom { flex-direction: column; gap: 28px; }
+  .footer__logo-img { height: 64px; }
+}
