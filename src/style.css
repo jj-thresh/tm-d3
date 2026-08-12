@@ -25,7 +25,6 @@
 
   --font-display: 'widescreen', 'Archivo', system-ui, sans-serif;
   --font-body: 'Effra', 'Inter', system-ui, sans-serif;
-  --font-alt: '42dot Sans', 'Inter', system-ui, sans-serif;
 
   --blue: #0b519d;
   --blue-cyan: #379dcc;
@@ -131,7 +130,7 @@ h1, h2, h3, p { margin: 0; }
   align-items: center;
   justify-content: space-between;
 }
-.nav__logo img { height: 77px; width: 228.435px; }
+.nav__logo img { height: 77px; width: auto; }
 .nav__links {
   display: flex;
   align-items: center;
@@ -144,8 +143,10 @@ h1, h2, h3, p { margin: 0; }
   letter-spacing: -0.8px;
   color: #000;
 }
-.nav__links a { transition: opacity 0.2s ease; }
+.nav__links a { transition: color 0.25s ease, opacity 0.2s ease; }
 .nav__links a:hover { opacity: 0.6; }
+/* Auto-contrast: white links over dark section backgrounds (set by JS). */
+.nav--on-dark .nav__links { color: #fff; }
 
 /* =========================================================
    HERO
@@ -347,10 +348,10 @@ h1, h2, h3, p { margin: 0; }
   align-items: flex-start;
   gap: 32px;
 }
-.chevron { width: 43px; height: 77px; }
+.chevron { height: 77px; width: auto; }
 .section-head__title { font-size: 76px; letter-spacing: -3.8px; color: var(--blue); white-space: nowrap; }
 .section-head__sub {
-  font-family: var(--font-alt);
+  font-family: var(--font-body);
   font-size: 20px;
   line-height: 1.5;
   letter-spacing: -0.4px;
@@ -545,13 +546,13 @@ h1, h2, h3, p { margin: 0; }
 .grow__copy .btn { align-self: flex-start; margin-top: 6px; }
 .grow__arrow {
   position: absolute;
-  right: -11px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 338px;
-  height: 605.256px;
+  width: 322.205px;
+  height: 764.279px;
 }
-.grow__arrow img { width: 338px; height: 605.256px; }
+.grow__arrow img { width: 322.205px; height: 764.279px; }
 
 /* =========================================================
    FOOTER
@@ -560,44 +561,51 @@ h1, h2, h3, p { margin: 0; }
 .in--footer {
   padding: 100px 90px;
   display: flex;
-  flex-direction: column;
-  gap: 90px;
+  align-items: flex-start;
+  gap: 40px;
 }
-.footer__top {
+.footer__logo { display: flex; }
+.footer__logo-img { height: 84px; width: auto; } /* +150% of the previous 56px */
+/* Right block: "Let's connect" and the 3 columns share this left edge,
+   sitting in the right ~half of the footer; the logo stands alone at left. */
+.footer__right {
+  width: 712px;
+  margin-left: auto;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 100px;
 }
-/* Footer logo mirrors the header lockup, but uses the white "Our Work"
-   chevron so it reads on the blue footer. */
-.footer__logo { display: flex; align-items: center; gap: 14px; }
-.footer__mark { height: 52px; width: auto; }
-.footer__word { height: 30px; width: auto; }
-.footer__connect { display: flex; align-items: center; gap: 40px; color: #fff; }
+/* "Let's connect" (left) + socials (right). */
+.footer__connect {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  color: #fff;
+}
 .footer__cta {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 38px;
   line-height: 1.2;
   letter-spacing: -1.14px;
-  width: 372px;
 }
 .footer__social {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 143px;
+  gap: 28px;
   font-size: 32px;
 }
 .footer__social a { transition: opacity 0.2s ease; }
 .footer__social a:hover { opacity: 0.7; }
-/* v2 bottom row: services links | address | policy, aligned to the right. */
+/* Bottom row: services | address | policy spread across the full width;
+   services' left edge aligns with "Let's connect" above it. */
 .footer__bottom {
   display: flex;
-  justify-content: flex-end;
-  gap: 44px;
+  justify-content: space-between;
+  width: 100%;
   color: #fff;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 22px;
 }

@@ -131,6 +131,92 @@ function initHandRise() {
   });
 }
 
+// Title chevrons slide in from the left: x -30 -> 0, opacity 0 -> 100%.
+function initChevrons() {
+  gsap.utils.toArray('[data-anim="chevron"]').forEach((el) => {
+    gsap.from(el, {
+      x: -30,
+      autoAlpha: 0,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+      },
+    });
+  });
+}
+
+/* =========================================================
+   NAV CONTRAST (not motion — always on)
+   Detects the background behind the fixed nav and flips the
+   links (and logo) to white over dark sections, back to the
+   dark treatment over light ones. Uses a real contrast test:
+   whichever of black/white text has the higher contrast ratio
+   against the background wins.
+   ========================================================= */
+function initNavContrast() {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  const logo = nav.querySelector('.nav__logo img');
+  // Logo stays in colour on both; on dark sections only the "MEDIA" wordmark
+  // flips to white (that variant), so it stays legible on dark.
+  const LOGO_DARK = '/img/logo-header.svg'; // full colour, MEDIA orange (light bg)
+  const LOGO_LIGHT = '/img/logo-header-media-white.svg'; // colour, MEDIA white (dark bg)
+
+  const chan = (c) => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  };
+  const luminance = ([r, g, b]) => 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b);
+  const parseColors = (str) => {
+    const out = [];
+    const re = /rgba?\(([^)]+)\)/g;
+    let m;
+    while ((m = re.exec(str))) {
+      const p = m[1].split(',').map((s) => parseFloat(s));
+      if (p.length >= 3 && (p[3] === undefined || p[3] > 0)) out.push(p);
+    }
+    return out;
+  };
+  // Effective background luminance of the section (solid colour, or the top
+  // stop of a gradient — which dominates where the nav sits).
+  const bgLuminance = (el) => {
+    let node = el;
+    while (node && node.nodeType === 1) {
+      const cs = getComputedStyle(node);
+      if (cs.backgroundImage && cs.backgroundImage.includes('gradient')) {
+        const cols = parseColors(cs.backgroundImage);
+        if (cols.length) return luminance(cols[0]);
+      }
+      const solid = parseColors(cs.backgroundColor);
+      if (solid.length) return luminance(solid[0]);
+      node = node.parentElement;
+    }
+    return 1;
+  };
+  const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+  const update = () => {
+    const probeY = nav.getBoundingClientRect().bottom - 6;
+    let target = null;
+    document.querySelectorAll('.sec').forEach((s) => {
+      if (target || getComputedStyle(s).display === 'none') return;
+      const r = s.getBoundingClientRect();
+      if (r.top <= probeY && r.bottom > probeY) target = s;
+    });
+    const lum = target ? bgLuminance(target) : 1;
+    const onDark = contrast(1, lum) > contrast(0, lum); // white beats black
+    nav.classList.toggle('nav--on-dark', onDark);
+    if (logo) logo.src = onDark ? LOGO_LIGHT : LOGO_DARK;
+  };
+
+  update();
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+}
+
 function init() {
   window.ScrollTrigger = ScrollTrigger;
 
@@ -140,8 +226,11 @@ function init() {
     initWordReveals();
     initSeatCards();
     initCapRows();
+    initChevrons();
     initHandRise();
   }
+
+  initNavContrast(); // functional, runs regardless of reduced-motion
 
   // Recompute scroll positions once fonts/images settle the layout height.
   window.addEventListener('load', () => ScrollTrigger.refresh());
