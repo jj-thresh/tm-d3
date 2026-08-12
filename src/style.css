@@ -776,7 +776,12 @@ h1, h2, h3, p { margin: 0; }
 .word { display: inline-block; will-change: transform, opacity; }
 
 /* =========================================================
-   MOBILE NAV TOGGLE (hamburger) — hidden on desktop
+   NAV COLLAPSE / HAMBURGER TOGGLE
+   Two independent things drive `.nav--collapsed` on `.nav`
+   (see initNavCollapse in main.js): a small viewport, OR having
+   scrolled past the first dark section — either way the full
+   link row hides and the hamburger takes over, at ANY screen
+   size, so the nav never overlaps busy section content.
    ========================================================= */
 .nav__toggle {
   display: none;
@@ -803,6 +808,30 @@ h1, h2, h3, p { margin: 0; }
 .nav--open .nav__toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav--open .nav__toggle span:nth-child(2) { opacity: 0; }
 .nav--open .nav__toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Collapsed state: hide the full row, show the hamburger, and turn
+   .nav__links into a dropdown panel revealed by .nav--open. Applies at
+   any viewport width once .nav--collapsed is set. */
+.nav--collapsed .nav__toggle { display: flex; }
+.nav--collapsed .nav__links {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px var(--pad-x) 20px;
+  background: #fff;
+  color: #000 !important;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+.nav--collapsed .nav__links a { padding: 10px 0; font-size: 22px; }
+.nav--collapsed.nav--open .nav__links { opacity: 1; visibility: visible; transform: translateY(0); }
 
 /* =========================================================
    RESPONSIVE BREAKPOINTS (desktop-first)
@@ -864,28 +893,10 @@ h1, h2, h3, p { margin: 0; }
 @media (max-width: 1023px) {
   :root { --pad-x: 48px; }
 
-  /* Nav → hamburger */
+  /* Nav side padding at narrower widths. Collapse-to-hamburger itself is
+     handled unconditionally by .nav--collapsed (see above) — main.js
+     forces it on at this width regardless of scroll position. */
   .nav { padding-left: var(--pad-x); padding-right: var(--pad-x); }
-  .nav__toggle { display: flex; }
-  .nav__links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    padding: 12px var(--pad-x) 20px;
-    background: #fff;
-    color: #000 !important;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  }
-  .nav__links a { padding: 10px 0; font-size: 22px; }
-  .nav--open .nav__links { opacity: 1; visibility: visible; transform: translateY(0); }
 
   .hero__title { font-size: 46px; letter-spacing: -1.8px; }
   .hero__eyebrow { font-size: 20px; }
