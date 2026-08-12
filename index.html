@@ -24,24 +24,8 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <!-- ================= FIXED NAV ================= -->
-    <header class="nav" data-node-id="12346:1824">
-      <div class="nav__inner">
-        <a class="nav__logo" href="#" aria-label="Threshold Media home">
-          <img src="/img/logo-header.svg" alt="Threshold Media" />
-        </a>
-        <nav class="nav__links">
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Work</a>
-          <a href="#">Insights</a>
-          <a href="#">Connect</a>
-        </nav>
-        <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </header>
+    <!-- Shared fixed nav (injected from src/chrome.js) -->
+    <div data-chrome="nav"></div>
 
     <main>
       <!-- ================= HERO ================= -->
@@ -242,44 +226,8 @@
       </section>
     </main>
 
-    <!-- ================= FOOTER ================= -->
-    <footer class="sec sec--footer" data-node-id="12346:1803">
-      <div class="in in--footer">
-        <div class="footer__logo">
-          <img class="footer__logo-img" src="/img/logo-footer-white.svg" alt="Threshold Media" />
-        </div>
-        <div class="footer__right">
-        <div class="footer__connect">
-            <p class="footer__cta">Let&rsquo;s connect.<br />Start by saying hello.</p>
-            <div class="footer__social">
-              <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-              <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-              <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            </div>
-          </div>
-          <div class="footer__bottom">
-          <ul class="footer__services">
-            <li>Brand &amp; Strategy</li>
-            <li>Web &amp; Digital Experiences</li>
-            <li>Search &amp; Paid Media</li>
-            <li>Communication &amp; Engagement</li>
-            <li>Social Media &amp; Content</li>
-          </ul>
-          <address class="footer__address">
-            20755 Williamsport Pl. #180<br />
-            Ashburn, VA 20147<br />
-            Phone +1 (571) 333-7999<br />
-            <a href="mailto:info@thresholdmedia.com">info@thresholdmedia.com</a><br />
-            <a href="https://www.thresholdmedia.com">www.thresholdmedia.com</a>
-          </address>
-          <div class="footer__policy">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
-          </div>
-        </div>
-        </div>
-      </div>
-    </footer>
+    <!-- Shared footer (injected from src/chrome.js) -->
+    <div data-chrome="footer"></div>
 
     <script type="module" src="/src/main.js"></script>
   </body>

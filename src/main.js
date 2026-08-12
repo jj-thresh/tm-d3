@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { mountChrome } from './chrome.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -162,8 +163,8 @@ function initNavContrast() {
   const logo = nav.querySelector('.nav__logo img');
   // Logo stays in colour on both; on dark sections only the "MEDIA" wordmark
   // flips to white (that variant), so it stays legible on dark.
-  const LOGO_DARK = '/img/logo-header.svg'; // full colour, MEDIA orange (light bg)
-  const LOGO_LIGHT = '/img/logo-header-media-white.svg'; // colour, MEDIA white (dark bg)
+  const LOGO_DARK = 'img/logo-header.svg'; // full colour, MEDIA orange (light bg)
+  const LOGO_LIGHT = 'img/logo-header-media-white.svg'; // colour, MEDIA white (dark bg)
 
   const chan = (c) => {
     c /= 255;
@@ -237,6 +238,7 @@ function initMobileNav() {
 
 function init() {
   window.ScrollTrigger = ScrollTrigger;
+  mountChrome(); // inject shared nav + footer before anything queries them
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!prefersReduced) {

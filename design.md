@@ -116,11 +116,16 @@ Reflow patterns to reuse:
 
 ## 3. Components (reuse verbatim)
 
-### 3.1 Fixed nav (with auto-contrast + mobile hamburger)
-- `position: fixed`, full-bleed, `backdrop-filter: blur(15px)`, padding `45px 10px 35px`.
+### 3.1 Fixed nav (shared across all pages, with auto-contrast + mobile hamburger)
+- `position: fixed`, full-bleed, padding `45px 10px 35px`. **No blur/glass effect** (removed
+  by request — was `backdrop-filter: blur(15px)`, now plain transparent).
 - Inner rail `width: 100%; max-width: 1280px`; logo left, links right.
 - Logo: `/img/logo-header.svg` (247×76, colour). Links: `--font-display` 700, 20px, gap 35px.
-- Labels: **About · Services · Work · Insights · Connect** (unlinked placeholders).
+- Labels/hrefs: **About → about.html · Capabilities → capabilities.html · Work → work.html ·
+  Insights → insights.html · Connect → connect.html** (matches the nav row shown in the
+  interior-pages source PDF; supersedes an earlier ad-hoc "Services" label).
+- **Active-page indicator:** `chrome.js` (`mountChrome`) compares `location.pathname` to each
+  link's `href` and adds `.is-active`, which draws a `currentColor` underline (`::after`).
 - **Auto-contrast** (`initNavContrast`, runs regardless of reduced-motion): on scroll it
   probes the section behind the nav, computes black-vs-white contrast, and toggles
   `.nav--on-dark` → **white links**, and swaps the logo to `/img/logo-header-media-white.svg`
@@ -129,7 +134,16 @@ Reflow patterns to reuse:
 - **Mobile hamburger** (≤1023, `initMobileNav`): `.nav__toggle` shows; tapping toggles
   `.nav--open`, which drops the links down as a white panel with dark text.
 - Because the nav is fixed, internal pages need top padding (~157px) or `scroll-margin` so
-  headings clear it.
+  headings clear it. `.sec` already carries `scroll-margin-top: 140px` for in-page anchors.
+- **Shared markup, not copy-pasted per page:** the nav (and footer) HTML lives once in
+  `src/chrome.js` as template strings, injected by `mountChrome()` into every page's
+  `<div data-chrome="nav">` / `<div data-chrome="footer">` placeholders. Edit chrome.js, not
+  the per-page HTML, to change nav/footer content. Asset paths inside chrome.js are
+  **relative** (`img/…`, not `/img/…`) since injected HTML isn't processed by Vite's base-path
+  rewriting — this matters if you add more pages.
+- **Link colour safety:** the global reset includes `a:visited { color: inherit; }` — without
+  it, browsers apply a default visited-link colour (visible as a wrong hue) to any custom link
+  class that doesn't explicitly set `:visited`. `.text-link` and friends rely on this reset.
 
 ### 3.2 Section header (chevron + title + subtitle)
 ```html
@@ -163,6 +177,70 @@ Reflow patterns to reuse:
 - "Let's connect" left-aligns with the services column. On tablet/mobile the whole footer
   stacks (logo → connect → columns).
 
+### 3.6 Interior-page components (About/Capabilities/Work/Insights/Connect)
+Built for the content pages; reuse these rather than inventing new patterns.
+
+**Page intro (kicker + H1 + subhead + body + optional link)** — used at the top of every
+interior page:
+```html
+<section class="sec sec--intro">
+  <div class="in in--intro">
+    <p class="intro__kicker" data-reveal>Section Name</p>
+    <h1 class="h-display intro__title" data-anim="words">Headline.</h1>
+    <p class="intro__subhead" data-reveal>Supporting subhead.</p>
+    <p class="intro__body" data-reveal>Paragraph copy.</p>
+    <a class="text-link" href="#anchor-or-page.html" data-reveal>Link label <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+</section>
+```
+- `.intro__title` is wired into the same responsive font-size list as `.section-head__title`
+  etc., so it scales at every breakpoint automatically.
+- `.intro__kicker` = orange, uppercase, 14px, tracked. `.intro__subhead` = display font 500,
+  32px, `var(--blue)`. `.intro__body` = body font, 20px.
+- **Light modifiers** for use on dark/coloured backgrounds: `.intro__title--light`,
+  `.intro__subhead--light`, `.intro__body--light` (just flip `color` to `#fff`).
+- The same title/subhead/body stack, without the page-hero padding, can be dropped into any
+  band via a `.team__intro` wrapper (`display:flex; column; gap:20px; max-width:820px`) inside
+  a `.content-band` — used for lighter mid-page or closing statements (see Work/Insights below).
+
+**Text link** (inline CTA used throughout the interior-page copy, e.g. "Learn more →"):
+```html
+<a class="text-link" href="…">Label <i class="fa-solid fa-arrow-right"></i></a>
+```
+`--font-body` 700, `var(--blue)` (or `.text-link--on-dark` / `--on-orange` for white on
+colour), arrow nudges right on hover. Point it at an on-page `#anchor` when the very next
+section covers that topic, or at another page when it's a "next step" CTA.
+
+**Band background utilities** — put a landing-page gradient on ANY section without coupling
+to a homepage-specific class name:
+```css
+.bg-blue   { background: linear-gradient(180deg, var(--blue) 36.6%, var(--blue-cyan) 138%); }
+.bg-orange { background: linear-gradient(180deg, var(--orange), var(--orange-b)); }
+```
+Pair with `.content-band` on the `.in` (padding `100px var(--pad-x) 130px`, flex column, gap
+56px) instead of a page-specific `.in--NAME`.
+
+**Cards grid** — N cards in an even row under a `.section-head` (as opposed to `.seat__cards`,
+which sits beside its title): `.cards-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }`,
+containing plain `.card` elements (`.cards-grid .card` resets the card's fixed width to
+`100%`). Responsive: 2 cols ≤1279, 1 col ≤767. Use `.section-head__title--wrap` on the
+heading if it's a full sentence rather than a 1–2 word label — the base `.section-head__title`
+is `white-space: nowrap`, which overflows long headings.
+
+**Role/topic grid** — icon-in-circle + label tiles (e.g. "Meet the team" roles):
+```html
+<div class="roles__grid">
+  <div class="role"><span class="role__icon"><i class="fa-solid fa-…"></i></span><h3 class="role__label">Label</h3></div>
+  …
+</div>
+```
+6 cols desktop → 3 (≤1279) → 2 (≤767). White circle badge, orange icon, white label text (bg
+is always a coloured band here).
+
+**Contact CTAs** (Connect page): `.contact-actions` (flex row, `gap:16px`) wrapping `.btn`
+elements with `tel:`/`mailto:` hrefs; `.contact-address` for the plain-text address below.
+No submission form is built — see §8.
+
 ---
 
 ## 4. Motion (GSAP + ScrollTrigger)
@@ -188,8 +266,9 @@ in CSS (GSAP resolves a tween-level `transformOrigin` to center on completion).
 
 ---
 
-## 5. Page anatomy (current landing page)
+## 5. Page anatomy
 
+### 5.1 Landing page (`index.html`)
 Top → bottom, matching Figma v2. Two sections are intentionally hidden (kept in code):
 
 1. **Hero** — eyebrow, `hero__title`, subtitle, orange CTA ("See what real partnership looks like →").
@@ -201,6 +280,23 @@ Top → bottom, matching Figma v2. Two sections are intentionally hidden (kept i
 7. **Capabilities (columns)** — orange band, 5 columns, no team photo (this is the visible one).
 8. **Want growth (CTA)** — title, body, orange button, big two-tone arrow graphic (right).
 9. **Footer**.
+
+### 5.2 Interior pages
+Content sourced from the "Threshold website interior pages" PDF. Each page: intro (white) →
+1–2 content bands → closing CTA → shared footer.
+
+| Page | Intro | Content band(s) | Closing |
+|---|---|---|---|
+| **about.html** | "Partnership in practice." | Orange `.cards-grid` (4 "when…" cards) → Blue `.roles__grid` (6 roles, "Hi there! / Meet the team.") | Big `.sec--grow` quote CTA → capabilities.html |
+| **capabilities.html** | "Everything under one very capable roof." | White `.cap__list` (5 rows, reuses the homepage's *hidden* list component — see below) | Big `.sec--grow` CTA "More show. Less tell." → work.html |
+| **work.html** | "The proof's in the portfolio." | Blue `.work__grid` (reuses homepage's Our Work grid verbatim) | Light `.team__intro` statement + `.text-link` → connect.html |
+| **insights.html** | "We've learned a thing or two." | Blue `.work__grid` — **placeholder**, see §8 | Light `.team__intro` statement + `.text-link` → connect.html |
+| **connect.html** | "Finding the right partner is everything." | — | `.contact-actions` (Email/Call buttons) + address, no form (see §8) |
+
+Note: `capabilities.html` reuses `.in--cap`/`.cap__*` (the list markup), which is safe because
+only the `.sec--cap` *wrapper* is `display:none` on the homepage — the component classes
+themselves carry no hidden state. The new page wraps them in `.sec--capabilities-list`
+(background only) instead.
 
 ---
 
@@ -220,26 +316,52 @@ Top → bottom, matching Figma v2. Two sections are intentionally hidden (kept i
 ---
 
 ## 7. Building a new internal page — checklist
-1. Start from the `.sec` / `.in` band + column structure; reuse the **nav** and **footer**
-   markup verbatim (add top padding to clear the fixed nav).
-2. Use the **color tokens** / bands; alternate white / blue / orange as the landing page does.
-3. Headings: `class="h-display"` + `data-anim="words"`; chevrons `data-anim="chevron"`;
-   supporting content `data-reveal`. Reuse buttons and section headers unchanged.
-4. Drive horizontal padding from `var(--pad-x)`; add the same breakpoint reflows (stack
-   multi-column sections, make fixed grids fluid via `aspect-ratio`, hide/relayout absolute
-   decorations). Verify **no horizontal overflow** at every breakpoint.
-5. Images → WebP at ~2–3× display size.
-6. Preview: `npm run dev` (http://localhost:5173). Deploy: `npm run deploy`.
+1. Copy an existing interior page (e.g. `about.html`) as a starting point — it already has the
+   right `<head>` (Typekit/Inter/Font Awesome/style.css links), `<div data-chrome="nav">` /
+   `<div data-chrome="footer">` placeholders, and `<script type="module" src="/src/main.js">`.
+   **Do not** hand-write the nav/footer markup — it's shared via `src/chrome.js`.
+2. Register the new file in `vite.config.js` → `build.rollupOptions.input` (Vite's multi-page
+   build won't include a page it doesn't know about) and add its href/label to the nav list
+   in `src/chrome.js`.
+3. Use **§3.6 interior-page components** (intro stack, text-link, cards-grid, roles grid,
+   `.bg-blue`/`.bg-orange` + `.content-band`) rather than inventing new ones. Fall back to the
+   landing-page components (§3.2–3.5) where they fit directly (e.g. `.work__grid`, `.cap__list`).
+4. Headings: `class="h-display"` + `data-anim="words"`; chevrons `data-anim="chevron"`;
+   supporting content `data-reveal`.
+5. Drive horizontal padding from `var(--pad-x)`; the interior components already have
+   responsive rules in the breakpoint blocks — extend them the same way if you add new ones.
+   Verify **no horizontal overflow** at every breakpoint.
+6. Images → WebP at ~2–3× display size.
+7. Preview: `npm run dev` (http://localhost:5173) or build + `npx vite preview` (closer to
+   production — the dev server's SPA history can occasionally misbehave mid-session; a hard
+   `npm run build && npx vite preview` is the more reliable way to sanity-check a new page).
+   Deploy: `npm run deploy`.
 
 ---
 
 ## 8. Known gaps / decisions
 - **Effra** and heavier Widescreen weights aren't licensed here — body falls back to Inter; 800→700.
-- **Capabilities:** the orange **columns** version (`.sec--caps2`) is shown; the light **list**
-  (`.sec--cap`) and the **"Over 30 years" video** (`.sec--video`) are `display: none` (kept in code).
+- **Capabilities (homepage):** the orange **columns** version (`.sec--caps2`) is shown; the
+  light **list** (`.sec--cap`) and the **"Over 30 years" video** (`.sec--video`) are
+  `display: none` (kept in code). The interior `capabilities.html` page reuses the list's
+  underlying classes directly (see §5.2) — that page is unaffected by `.sec--cap`'s hidden state.
 - **Nav "MEDIA" on orange:** the contrast rule only whitens "MEDIA" on *dark* (blue) bands, so
   on *orange* bands the orange "MEDIA" is low-contrast. Extend the rule if that's unwanted.
 - The **Lansdowne** "Our Work" tile is a white placeholder (no clean logo asset yet).
+- **Insights page grid is a placeholder.** The source content marks this spot as
+  `[work examples]` with no specific articles supplied — it currently reuses the *same* work
+  portfolio grid as `work.html` (real projects, not fabricated posts) purely as a stand-in.
+  Swap in a real article/post grid once Insights content exists.
+- **Connect page has no submission form.** This is a static site with no backend, so a form
+  that appeared to "submit" would silently go nowhere — that's a deceptive pattern, so it
+  wasn't built. Instead the page has direct, functional `tel:`/`mailto:` CTAs using the real
+  phone/email already in the footer. If a working form is wanted, it needs a form-handling
+  service (e.g. Formspree, Netlify Forms) or a real backend endpoint — flag which one and it
+  can be wired in.
 - **No CI:** the `gh` token lacks `workflow` scope, so `.github/workflows` is kept local and
   deploys are manual via `npm run deploy` (source → `main`, built `dist/` → `gh-pages` →
   <https://jj-thresh.github.io/tm-d3/>).
+- **Multi-page build:** `vite.config.js` sets `appType: 'mpa'` (no SPA fallback — a
+  not-yet-built page correctly 404s instead of silently serving the homepage) and lists every
+  page under `build.rollupOptions.input`. New pages must be added to both that list and the
+  nav in `src/chrome.js`, or they won't be built / won't be linked.
