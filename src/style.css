@@ -23,7 +23,7 @@
 :root {
   --design-w: 1512px;
 
-  --font-display: 'Widescreen', 'Archivo', system-ui, sans-serif;
+  --font-display: 'widescreen', 'Archivo', system-ui, sans-serif;
   --font-body: 'Effra', 'Inter', system-ui, sans-serif;
   --font-alt: '42dot Sans', 'Inter', system-ui, sans-serif;
 
@@ -188,6 +188,15 @@ h1, h2, h3, p { margin: 0; }
   letter-spacing: -5.67px;
   color: #000;
 }
+.hero__sub {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.5;
+  color: #000;
+  width: 505px;
+  margin-top: 6px;
+}
+.hero__copy .btn { margin-top: 10px; }
 
 /* =========================================================
    ONE CALL
@@ -293,7 +302,8 @@ h1, h2, h3, p { margin: 0; }
 /* =========================================================
    VIDEO / 30 YEARS
    ========================================================= */
-.sec--video { background: #000; }
+/* Hidden to match v2 (no "Over 30 years" section in the current frame). Kept in code. */
+.sec--video { display: none; background: #000; }
 .in--video {
   min-height: 851px;
   display: flex;
@@ -352,7 +362,8 @@ h1, h2, h3, p { margin: 0; }
 /* =========================================================
    CAPABILITIES (list)
    ========================================================= */
-.sec--cap { background: #fff; }
+/* Hidden to match v2 (which shows the orange columns below instead). Kept in code. */
+.sec--cap { display: none; background: #fff; }
 .in--cap {
   padding: 100px 180px;
   display: flex;
@@ -463,27 +474,24 @@ h1, h2, h3, p { margin: 0; }
    CAPABILITIES (columns) + team photo
    ========================================================= */
 .sec--caps2 {
-  /* Hidden: the capabilities list above covers this. Kept in code intentionally. */
-  display: none;
   overflow: hidden;
   background: linear-gradient(180deg, var(--orange), var(--orange-b));
 }
 .in--caps2 {
-  min-height: 683px;
   padding: 100px 180px 130px;
 }
 .caps2__content {
-  width: 842px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 .caps2__cols {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 25px;
-  width: 731px;
-  margin-top: 10px;
+  width: 100%;
+  margin-top: 24px;
   color: #fff;
 }
 .caps2__col {
@@ -492,8 +500,8 @@ h1, h2, h3, p { margin: 0; }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 .caps2__name {
   font-family: var(--font-display);
@@ -510,16 +518,8 @@ h1, h2, h3, p { margin: 0; }
   line-height: 22px;
   width: 100%;
 }
-.caps2__photo {
-  position: absolute;
-  left: 883px;
-  top: 99px;
-  width: 822px;
-  height: 584px;
-  border-radius: 32px;
-  overflow: hidden;
-}
-.caps2__photo img { width: 100%; height: 100%; object-fit: cover; }
+/* v2 has no team photo in this section. */
+.caps2__photo { display: none; }
 
 /* =========================================================
    WANT GROWTH / CTA
@@ -558,7 +558,7 @@ h1, h2, h3, p { margin: 0; }
    ========================================================= */
 .sec--footer { background: var(--blue); }
 .in--footer {
-  padding: 80px 96px;
+  padding: 100px 90px;
   display: flex;
   flex-direction: column;
   gap: 90px;
@@ -591,16 +591,38 @@ h1, h2, h3, p { margin: 0; }
 }
 .footer__social a { transition: opacity 0.2s ease; }
 .footer__social a:hover { opacity: 0.7; }
-.footer__legal {
+/* v2 bottom row: services links | address | policy, aligned to the right. */
+.footer__bottom {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 44px;
   color: #fff;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 16px;
   line-height: 22px;
 }
-.footer__legal a { text-decoration: none; }
+.footer__services {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.footer__services li { white-space: nowrap; }
+.footer__address {
+  font-style: normal;
+  width: 279px;
+}
+.footer__address a { text-decoration: none; }
+.footer__address a:hover { text-decoration: underline; }
+.footer__policy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  white-space: nowrap;
+}
+.footer__policy a:hover { text-decoration: underline; }
 
 /* ---------- scroll-reveal defaults (GSAP toggles these) ---------- */
 [data-reveal] { will-change: transform, opacity; }
